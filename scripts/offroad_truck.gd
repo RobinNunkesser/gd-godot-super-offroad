@@ -351,22 +351,45 @@ func get_shocks_absorption() -> float:
 	# Level 1 = 0.75, Level 5 = 0.98 (fast kein Speedverlust)
 	return 0.70 + (lvl * 0.06)
 
-# Input Readers (Human Players)
+# Input Readers (Human Players via MultiplayerInput Addon with InputMap Fallback)
 func _read_steer_input() -> float:
+	var mi = get_node_or_null("/root/MultiplayerInput")
+	if mi:
+		var move = mi.get_move_vector(truck_id)
+		if abs(move.x) > 0.05:
+			return move.x
 	var prefix = "p%d_" % (truck_id + 1)
 	var left = Input.get_action_strength(prefix + "steer_left")
 	var right = Input.get_action_strength(prefix + "steer_right")
 	return right - left
 
 func _read_gas_input() -> float:
+	var mi = get_node_or_null("/root/MultiplayerInput")
+	if mi:
+		var move = mi.get_move_vector(truck_id)
+		if move.y < -0.1:
+			return -move.y
+		if mi.is_action_pressed(truck_id, "gas") or mi.is_action_pressed(truck_id, "primary"):
+			return 1.0
 	var prefix = "p%d_" % (truck_id + 1)
 	return Input.get_action_strength(prefix + "gas")
 
 func _read_brake_input() -> float:
+	var mi = get_node_or_null("/root/MultiplayerInput")
+	if mi:
+		var move = mi.get_move_vector(truck_id)
+		if move.y > 0.1:
+			return move.y
+		if mi.is_action_pressed(truck_id, "brake") or mi.is_action_pressed(truck_id, "tertiary"):
+			return 1.0
 	var prefix = "p%d_" % (truck_id + 1)
 	return Input.get_action_strength(prefix + "brake")
 
 func _read_nitro_input() -> bool:
+	var mi = get_node_or_null("/root/MultiplayerInput")
+	if mi:
+		if mi.is_action_just_pressed(truck_id, "nitro") or mi.is_action_just_pressed(truck_id, "secondary"):
+			return true
 	var prefix = "p%d_" % (truck_id + 1)
 	return Input.is_action_just_pressed(prefix + "nitro")
 

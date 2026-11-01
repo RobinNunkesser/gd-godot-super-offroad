@@ -1,0 +1,6 @@
+[submodule "packages/godot-multiplayer-input"]
+	path = packages/godot-multiplayer-input
+	url = https://github.com/Italbytz/godot-multiplayer-input.git
+[submodule "packages/godot-test-harness"]
+	path = packages/godot-test-harness
+	url = https://github.com/Italbytz/godot-test-harness.git
